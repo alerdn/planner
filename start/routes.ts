@@ -20,6 +20,10 @@
 
 import Route from "@ioc:Adonis/Core/Route";
 
+import ClienteRoute from "./routes/cliente";
+
 Route.get("/", async () => {
 	return { hello: "worlddgdfgdfg" };
 });
+
+ClienteRoute(Route);
