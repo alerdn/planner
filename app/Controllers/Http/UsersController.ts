@@ -31,4 +31,10 @@ export default class UsersController {
 
 		return await user.save();
 	}
+
+	public async logout({ auth }: HttpContextContract) {
+		await auth.use("api").revoke();
+
+		return { success: true, message: "Usuário deslogado com sucesso" }
+	}
 }
