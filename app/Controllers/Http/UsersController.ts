@@ -21,4 +21,14 @@ export default class UsersController {
 			response.badRequest({ success: false, message: error.message });
 		}
 	}
+
+	public async alterarSenha({ request, auth }: HttpContextContract) {
+		const { novaSenha } = request.all();
+
+		const user = auth.user!;
+
+		user.merge({ password: novaSenha });
+
+		return await user.save();
+	}
 }
