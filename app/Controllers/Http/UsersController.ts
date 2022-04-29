@@ -1,13 +1,13 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import Hash from '@ioc:Adonis/Core/Hash'
 import User from "App/Models/User";
 
 export default class UsersController {
-	public async cadastrar({ request, response, auth }: HttpContextContract) {
+	public async cadastrar({ request, response }: HttpContextContract) {
 		const { email, senha } = request.all();
 
 		try {
-			const user = await User.create({ email, password: senha });
-			return auth.login(user);
+			return await User.create({ email, password: senha });
 		} catch (error) {
 			response.badRequest({ success: false, message: error.message });
 		}
@@ -23,10 +23,13 @@ export default class UsersController {
 		}
 	}
 
-	public async alterarSenha({ request, auth }: HttpContextContract) {
-		const { novaSenha } = request.all();
-
+	public async alterarSenha({ request, response, auth }: HttpContextContract) {
+		const { senhaAtual, novaSenha } = request.all();
 		const user = auth.user!;
+
+		if (!(await Hash.verify(user.password, senhaAtual))) {
+			return response.badRequest("Senha atual incorreta");
+		}
 
 		user.merge({ password: novaSenha });
 
