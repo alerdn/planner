@@ -6,7 +6,17 @@ export default class UsersController {
 		const { email, senha } = request.all();
 
 		try {
-			return await User.create({ email, senha });
+			return await User.create({ email, password: senha });
+		} catch (error) {
+			response.badRequest({ success: false, message: error.message });
+		}
+	}
+
+	public async login({ request, response, auth }: HttpContextContract) {
+		const { email, senha } = request.all();
+
+		try {
+			return await auth.attempt(email, senha);
 		} catch (error) {
 			response.badRequest({ success: false, message: error.message });
 		}
