@@ -1,12 +1,14 @@
-// import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import User from "App/Models/User";
 
 export default class UsersController {
-	public async index() {
-		return await User.all();
-	}
+	public async cadastrar({ request, response }: HttpContextContract) {
+		const { email, senha } = request.all();
 
-	public async store() {
-		return await User.create({nome: "Alexandre", email: "alexandre@gmail.com", senha: "12346578"});
+		try {
+			return await User.create({ email, senha });
+		} catch (error) {
+			response.badRequest({ success: false, message: error.message });
+		}
 	}
 }
