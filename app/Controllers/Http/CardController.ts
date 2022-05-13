@@ -79,4 +79,15 @@ export default class CardController {
 
 		return await entry.delete();
 	}
+
+    public async cards({ auth }: HttpContextContract) {
+        const user = auth.user!;
+        const cards = await Card.query().where({ userId: user.id });
+        
+        for(const c of cards) {
+            await c.load("entries");
+        }
+
+        return cards;
+    }
 }
