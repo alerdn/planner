@@ -1,4 +1,5 @@
-import { BaseModel, belongsTo, BelongsTo, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, belongsTo, BelongsTo, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import Entry from "./Entry";
 import User from "./User";
 
 export default class Card extends BaseModel {
@@ -13,4 +14,7 @@ export default class Card extends BaseModel {
 
     @belongsTo(() => User)
     public user: BelongsTo<typeof User>;
+
+    @hasMany(() => Entry)
+    public entries: HasMany<typeof Entry>;
 }

@@ -12,7 +12,7 @@ export default class Entry extends BaseModel {
     public description: string;
 
     @column()
-    public completed: boolean;
+    public completed: number;
 
     @belongsTo(() => Card)
     public card: BelongsTo<typeof Card>;
