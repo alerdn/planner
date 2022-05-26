@@ -8,6 +8,7 @@ export default (route: typeof Route) => {
 			route.post("/senhas", "UsersController.alterarSenha").middleware("auth");
 			route.post("/logout", "UsersController.logout").middleware("auth");
 			route.delete("/", "UsersController.excluirCadastro").middleware("auth");
+			route.get("/", "UsersController.buscarUsuario").middleware("auth");
 		})
 		.prefix("users");
 };

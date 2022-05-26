@@ -1,5 +1,5 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
-import Hash from '@ioc:Adonis/Core/Hash'
+import Hash from "@ioc:Adonis/Core/Hash";
 import User from "App/Models/User";
 
 export default class UsersController {
@@ -21,6 +21,10 @@ export default class UsersController {
 		} catch (error) {
 			response.badRequest({ success: false, message: error.message });
 		}
+	}
+
+	public async buscarUsuario({ auth }: HttpContextContract) {
+		return auth.user;
 	}
 
 	public async alterarSenha({ request, response, auth }: HttpContextContract) {
