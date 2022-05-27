@@ -5,10 +5,10 @@ import Entry from "App/Models/Entry";
 
 export default class CardController {
 	public async addCard({ request, auth }: HttpContextContract) {
-		const { label, dataCriado } = request.all();
+		const { label, data_criado } = request.all();
 		const user = auth.user!;
 
-		return await Card.create({ label, dataCriado, userId: user.id });
+		return await Card.create({ label, dataCriado: data_criado, userId: user.id });
 	}
 
 	public async addEntry({ request, response, auth }: HttpContextContract) {
