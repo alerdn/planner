@@ -3,11 +3,15 @@ import Hash from "@ioc:Adonis/Core/Hash";
 import User from "App/Models/User";
 
 export default class UsersController {
-	public async cadastrar({ request, response }: HttpContextContract) {
+	public async cadastrar({ request, response, auth }: HttpContextContract) {
 		const { nome, sobrenome, email, senha } = request.all();
 
 		try {
-			return await User.create({ nome, sobrenome, email, password: senha });
+			const user = await User.create({ nome, sobrenome, email, password: senha });
+			return {
+				...(await auth.login(user)).toJSON(),
+				...user.toJSON()
+			}
 		} catch (error) {
 			response.badRequest({ success: false, message: error.message });
 		}
