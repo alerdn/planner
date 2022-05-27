@@ -3,18 +3,21 @@ import Entry from "./Entry";
 import User from "./User";
 
 export default class Card extends BaseModel {
-    @column({isPrimary: true})
-    public id: number;
+	@column({ isPrimary: true })
+	public id: number;
 
-    @column()
-    public userId: number;
+	@column()
+	public dataCriado: string;
 
-    @column()
-    public label: string;
+	@column()
+	public userId: number;
 
-    @belongsTo(() => User)
-    public user: BelongsTo<typeof User>;
+	@column()
+	public label: string;
 
-    @hasMany(() => Entry)
-    public entries: HasMany<typeof Entry>;
+	@belongsTo(() => User)
+	public user: BelongsTo<typeof User>;
+
+	@hasMany(() => Entry)
+	public entries: HasMany<typeof Entry>;
 }
