@@ -1,4 +1,5 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import Mail from "@ioc:Adonis/Addons/Mail";
 import Hash from "@ioc:Adonis/Core/Hash";
 import User from "App/Models/User";
 
@@ -10,8 +11,8 @@ export default class UsersController {
 			const user = await User.create({ nome, sobrenome, email, password: senha });
 			return {
 				...(await auth.login(user)).toJSON(),
-				...user.toJSON()
-			}
+				...user.toJSON(),
+			};
 		} catch (error) {
 			response.badRequest({ success: false, message: error.message });
 		}
@@ -28,8 +29,24 @@ export default class UsersController {
 	}
 
 	public async buscarUsuario({ auth }: HttpContextContract) {
-		console.log("teste")
+		console.log("teste");
 		return auth.user;
+	}
+
+	public async solicitacaoAlterarSenha({ request }: HttpContextContract) {
+		const { email } = request.all();
+		/*
+		Envia e-mail aqui
+		await Mail.send((msg) => {
+
+		});*/
+	}
+
+	public async confirmacaoAlterarSenha({ request }: HttpContextContract) {
+		const { codigo, senha, confirmacao } = request.all();
+		console.log(codigo, senha, confirmacao);
+
+		// Implementar logica de alteração de senha
 	}
 
 	public async alterarSenha({ request, response, auth }: HttpContextContract) {
