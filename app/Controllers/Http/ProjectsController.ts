@@ -38,12 +38,6 @@ export default class ProjectsController {
 		return projects;
 	}
 
-	public async project({ params }: HttpContextContract) {
-		const projectId = params.id;
-		const projeto = await Project.findOrFail(projectId);
-		return projeto;
-	}
-
 	public async addMember({ request, response, auth }: HttpContextContract) {
 		const { email, projectId } = request.all();
 		const user = auth.user!;
@@ -85,14 +79,19 @@ export default class ProjectsController {
 			.delete();
 	}
 
-    public async members({ request }: HttpContextContract){
-        const { projectId } = request.all();
+	public async members({ request }: HttpContextContract) {
+		const { projectId } = request.all();
 
-        return (await Database.rawQuery(`
+		return (
+			await Database.rawQuery(
+				`
             SELECT DISTINCT u.*
             FROM users u, projects_members pm, projects p
             WHERE (u.id = pm.user_id and pm.project_id = p.id and pm.project_id = ?)
                 OR u.id = p.user_id
-        `, [projectId])).rows;
-    }
+        `,
+				[projectId]
+			)
+		).rows;
+	}
 }
