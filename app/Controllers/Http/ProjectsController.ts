@@ -84,4 +84,15 @@ export default class ProjectsController {
 			})
 			.delete();
 	}
+
+    public async members({ request }: HttpContextContract){
+        const { projectId } = request.all();
+
+        return (await Database.rawQuery(`
+            SELECT DISTINCT u.*
+            FROM users u, projects_members pm, projects p
+            WHERE (u.id = pm.user_id and pm.project_id = p.id and pm.project_id = ?)
+                OR u.id = p.user_id
+        `, [projectId])).rows;
+    }
 }
