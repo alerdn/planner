@@ -5,6 +5,8 @@ export default (route: typeof Route) => {
 		.group(() => {
             route.get("/", "ProjectsController.projects");
 			route.post("/", "ProjectsController.addProject");
+			route.post("/members", "ProjectsController.addMember");
+			route.delete("/members", "ProjectsController.removeMember");
 		})
 		.prefix("projects")
 		.middleware("auth");

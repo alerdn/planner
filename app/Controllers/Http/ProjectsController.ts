@@ -59,7 +59,29 @@ export default class ProjectsController {
 
 		return await Database.table("projects_members").insert({
 			user_id: member.id,
-			projectId,
+			project_id: projectId,
 		});
+	}
+
+	public async removeMember({ request, response, auth }: HttpContextContract) {
+		const { email, projectId } = request.all();
+		const user = auth.user!;
+
+		const project = await Project.findOrFail(projectId);
+		const member = await User.findByOrFail("email", email);
+
+		if (project.userId != user.id)
+			return response.badRequest({
+				success: false,
+				message: "Você não tem autorização para remover um membro deste projeto",
+			});
+
+		return await Database.query()
+			.from("projects_members")
+			.where({
+				user_id: member.id,
+				project_id: projectId,
+			})
+			.delete();
 	}
 }

@@ -4,42 +4,24 @@ import Card from "App/Models/Card";
 import Entry from "App/Models/Entry";
 
 export default class CardController {
-	public async addCard({ request, auth }: HttpContextContract) {
+	public async addCard({ request }: HttpContextContract) {
 		const { label, data_criado, projectId } = request.all();
-		const user = auth.user!;
-
-		return await Card.create({ label, dataCriado: data_criado, userId: user.id, projectId });
+		return await Card.create({ label, dataCriado: data_criado, projectId });
 	}
 
-	public async addEntry({ request, response, auth }: HttpContextContract) {
+	public async addEntry({ request }: HttpContextContract) {
 		const { description, cardId } = request.all();
-		const user = auth.user!;
-
-		const card = await Card.findOrFail(cardId);
-		if (card.userId != user.id)
-			return response.badRequest({
-				success: false,
-				message: "Você não tem autorização para adicionar essa entrada",
-			});
-
 		return await Entry.create({ description, cardId });
 	}
 
-	public async completeEntry({ request, response, auth }: HttpContextContract) {
+	public async completeEntry({ request }: HttpContextContract) {
 		const { entryId, completed } = request.all();
-		const user = auth.user!;
 
 		const entry = await Entry.findOrFail(entryId);
 		await entry.load("card");
 
 		const card = entry.card;
-		await card.load("user");
-
-		if (card.userId != user.id)
-			return response.badRequest({
-				success: false,
-				message: "Você não tem autorização alterar essa entrada",
-			});
+		await card.load("project");
 
 		entry.merge({ completed });
 
@@ -51,7 +33,6 @@ export default class CardController {
 		const user = auth.user!;
 
 		const card = await Card.findOrFail(cardId);
-		await card.load("user");
 
 		await card.load("project");
 
@@ -59,12 +40,6 @@ export default class CardController {
 			return response.badRequest({
 				success: false,
 				message: "Você não é o admin deste projeto e não pode deletar esse card",
-			});
-
-		if (card.userId != user.id)
-			return response.badRequest({
-				success: false,
-				message: "Você não tem autorização para deletar esse card",
 			});
 
 		await card.load("entries");
@@ -89,12 +64,9 @@ export default class CardController {
 		await entry.load("card");
 
 		const card = entry.card;
-		await card.load("user");
 
 		await card.load("project");
-		if (card.project.userId != user.id) return response.badRequest();
-
-		if (card.userId != user.id)
+		if (card.project.userId != user.id)
 			return response.badRequest({
 				success: false,
 				message: "Você não tem autorização deletar essa entrada",
@@ -103,10 +75,9 @@ export default class CardController {
 		return await entry.delete();
 	}
 
-	public async cards({ request, auth }: HttpContextContract) {
-		const user = auth.user!;
+	public async cards({ request }: HttpContextContract) {
 		const { projectId } = request.all();
-		const cards = await Card.query().where({ userId: user.id, projectId });
+		const cards = await Card.query().where({ projectId });
 
 		for (const c of cards) {
 			await c.load("entries");
