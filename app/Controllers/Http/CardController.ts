@@ -2,7 +2,6 @@ import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Database from "@ioc:Adonis/Lucid/Database";
 import Card from "App/Models/Card";
 import Entry from "App/Models/Entry";
-import Project from "App/Models/Project";
 
 export default class CardController {
 	public async addCard({ request, auth }: HttpContextContract) {
@@ -18,7 +17,10 @@ export default class CardController {
 
 		const card = await Card.findOrFail(cardId);
 		if (card.userId != user.id)
-			return response.badRequest("Você não tem autorização para adicionar essa entrada");
+			return response.badRequest({
+				success: false,
+				message: "Você não tem autorização para adicionar essa entrada",
+			});
 
 		return await Entry.create({ description, cardId });
 	}
@@ -34,7 +36,10 @@ export default class CardController {
 		await card.load("user");
 
 		if (card.userId != user.id)
-			return response.badRequest("Você não tem autorização alterar essa entrada");
+			return response.badRequest({
+				success: false,
+				message: "Você não tem autorização alterar essa entrada",
+			});
 
 		entry.merge({ completed });
 
@@ -48,8 +53,19 @@ export default class CardController {
 		const card = await Card.findOrFail(cardId);
 		await card.load("user");
 
+		await card.load("project");
+
+		if (card.project.userId != user.id)
+			return response.badRequest({
+				success: false,
+				message: "Você não é o admin deste projeto e não pode deletar esse card",
+			});
+
 		if (card.userId != user.id)
-			return response.badRequest("Você não tem autorização deletar essa entrada");
+			return response.badRequest({
+				success: false,
+				message: "Você não tem autorização para deletar esse card",
+			});
 
 		await card.load("entries");
 
@@ -75,8 +91,14 @@ export default class CardController {
 		const card = entry.card;
 		await card.load("user");
 
+		await card.load("project");
+		if (card.project.userId != user.id) return response.badRequest();
+
 		if (card.userId != user.id)
-			return response.badRequest("Você não tem autorização deletar essa entrada");
+			return response.badRequest({
+				success: false,
+				message: "Você não tem autorização deletar essa entrada",
+			});
 
 		return await entry.delete();
 	}
@@ -91,24 +113,5 @@ export default class CardController {
 		}
 
 		return cards;
-	}
-
-	public async addProject({ request, auth }: HttpContextContract) {
-		const { nome } = request.all();
-		const user = auth.user!;
-
-		return await Project.create({ nome, userId: user.id });
-	}
-
-	public async projects({ auth }: HttpContextContract) {
-		const user = auth.user!;
-		await user.load("projects");
-		return user.projects;
-	}
-
-	public async project({ params }: HttpContextContract) {
-		const projectId = params.id;
-		const projeto = await Project.findOrFail(projectId);
-		return projeto;
 	}
 }

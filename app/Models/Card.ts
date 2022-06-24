@@ -1,5 +1,6 @@
 import { BaseModel, belongsTo, BelongsTo, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
 import Entry from "./Entry";
+import Project from "./Project";
 import User from "./User";
 
 export default class Card extends BaseModel {
@@ -23,4 +24,7 @@ export default class Card extends BaseModel {
 
 	@hasMany(() => Entry)
 	public entries: HasMany<typeof Entry>;
+
+	@belongsTo(() => Project)
+	public project: BelongsTo<typeof Project>
 }
