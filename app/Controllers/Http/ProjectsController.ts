@@ -82,16 +82,22 @@ export default class ProjectsController {
 	public async members({ request }: HttpContextContract) {
 		const { projectId } = request.all();
 
-		return (
+		const otherMembers = (
 			await Database.rawQuery(
 				`
             SELECT DISTINCT u.*
             FROM users u, projects_members pm, projects p
             WHERE (u.id = pm.user_id and pm.project_id = p.id and pm.project_id = ?)
-                OR u.id = p.user_id
         `,
 				[projectId]
 			)
 		).rows;
+
+		const project = await Project.findOrFail(projectId);
+		await project.load("user");
+		const owner = project.user;
+
+		const members = otherMembers.concat(owner);
+		return members;
 	}
 }
