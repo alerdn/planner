@@ -2,13 +2,14 @@ import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Database from "@ioc:Adonis/Lucid/Database";
 import Card from "App/Models/Card";
 import Entry from "App/Models/Entry";
+import Project from "App/Models/Project";
 
 export default class CardController {
 	public async addCard({ request, auth }: HttpContextContract) {
-		const { label, data_criado } = request.all();
+		const { label, data_criado, projectId } = request.all();
 		const user = auth.user!;
 
-		return await Card.create({ label, dataCriado: data_criado, userId: user.id });
+		return await Card.create({ label, dataCriado: data_criado, userId: user.id, projectId });
 	}
 
 	public async addEntry({ request, response, auth }: HttpContextContract) {
@@ -52,16 +53,16 @@ export default class CardController {
 
 		await card.load("entries");
 
-		return await Database.transaction(async trx => {
+		return await Database.transaction(async (trx) => {
 			card.useTransaction(trx);
 
-            card.entries.forEach(async (e: Entry) => {
-                e.useTransaction(trx);
-                await e.delete();
-            });
+			card.entries.forEach(async (e: Entry) => {
+				e.useTransaction(trx);
+				await e.delete();
+			});
 
-            return await card.delete();
-		})
+			return await card.delete();
+		});
 	}
 
 	public async deleteEntry({ request, response, auth }: HttpContextContract) {
@@ -80,14 +81,34 @@ export default class CardController {
 		return await entry.delete();
 	}
 
-    public async cards({ auth }: HttpContextContract) {
-        const user = auth.user!;
-        const cards = await Card.query().where({ userId: user.id });
-        
-        for(const c of cards) {
-            await c.load("entries");
-        }
+	public async cards({ request, auth }: HttpContextContract) {
+		const user = auth.user!;
+		const { projectId } = request.all();
+		const cards = await Card.query().where({ userId: user.id, projectId });
 
-        return cards;
-    }
+		for (const c of cards) {
+			await c.load("entries");
+		}
+
+		return cards;
+	}
+
+	public async addProject({ request, auth }: HttpContextContract) {
+		const { nome } = request.all();
+		const user = auth.user!;
+
+		return await Project.create({ nome, userId: user.id });
+	}
+
+	public async projects({ auth }: HttpContextContract) {
+		const user = auth.user!;
+		await user.load("projects");
+		return user.projects;
+	}
+
+	public async project({ params }: HttpContextContract) {
+		const projectId = params.id;
+		const projeto = await Project.findOrFail(projectId);
+		return projeto;
+	}
 }

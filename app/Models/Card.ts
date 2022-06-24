@@ -15,6 +15,9 @@ export default class Card extends BaseModel {
 	@column()
 	public label: string;
 
+	@column()
+	public projectId: number
+
 	@belongsTo(() => User)
 	public user: BelongsTo<typeof User>;
 
