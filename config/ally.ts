@@ -27,7 +27,7 @@ const allyConfig: AllyConfig = {
 		driver: 'github',
 		clientId: Env.get('GITHUB_CLIENT_ID'),
 		clientSecret: Env.get('GITHUB_CLIENT_SECRET'),
-		callbackUrl: 'https://api-planner.herokuapp.com/auth/github',
+		callbackUrl: 'https://new-planner.vercel.app/auth/github',
 	},
 	/*
 	|--------------------------------------------------------------------------
