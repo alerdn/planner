@@ -14,5 +14,5 @@ export default (route: typeof Route) => {
 		})
 		.prefix("users");
 
-	route.post("/auth/github", "UsersController.githubAuth");
+	route.get("/auth/github", "UsersController.githubAuth");
 };
