@@ -22,7 +22,7 @@ export default class UsersController {
 		}
 
 		const user = await github.user()
-
+		console.log(user);
 		return user;
 	}
 
