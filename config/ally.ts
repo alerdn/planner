@@ -28,40 +28,8 @@ const allyConfig: AllyConfig = {
 		clientId: Env.get('GITHUB_CLIENT_ID'),
 		clientSecret: Env.get('GITHUB_CLIENT_SECRET'),
 		callbackUrl: 'https://new-planner.vercel.app/auth/github',
+		allowSignup: true
 	},
-	/*
-	|--------------------------------------------------------------------------
-	| Google driver
-	|--------------------------------------------------------------------------
-	*/
-	google: {
-		driver: 'google',
-		clientId: Env.get('GOOGLE_CLIENT_ID'),
-		clientSecret: Env.get('GOOGLE_CLIENT_SECRET'),
-		callbackUrl: 'http://localhost:3333/google/callback',
-	},
-  /*
-  |--------------------------------------------------------------------------
-  | LinkedIn driver
-  |--------------------------------------------------------------------------
-  */
-  linkedin: {
-    driver: 'linkedin',
-    clientId: Env.get('LINKEDIN_CLIENT_ID'),
-    clientSecret: Env.get('LINKEDIN_CLIENT_SECRET'),
-    callbackUrl: 'http://localhost:3333/linkedin/callback',
-  },
-  /*
-  |--------------------------------------------------------------------------
-  | Facebook driver
-  |--------------------------------------------------------------------------
-  */
-  facebook: {
-    driver: 'facebook',
-    clientId: Env.get('FACEBOOK_CLIENT_ID'),
-    clientSecret: Env.get('FACEBOOK_CLIENT_SECRET'),
-    callbackUrl: 'http://localhost:3333/facebook/callback',
-  },
 }
 
 export default allyConfig

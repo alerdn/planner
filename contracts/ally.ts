@@ -11,17 +11,5 @@ declare module '@ioc:Adonis/Addons/Ally' {
 			config: GithubDriverConfig
 			implementation: GithubDriverContract
 		}
-    google: {
-      config: GoogleDriverConfig
-      implementation: GoogleDriverContract
-    }
-    linkedin: {
-      config: LinkedInDriverConfig
-      implementation: LinkedInDriverContract
-    }
-    facebook: {
-      config: FacebookDriverConfig
-      implementation: FacebookDriverContract
-    }
 	}
 }

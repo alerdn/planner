@@ -6,24 +6,45 @@ import Hash from "@ioc:Adonis/Core/Hash";
 import User from "App/Models/User";
 
 export default class UsersController {
-	public async githubAuth({ ally }: HttpContextContract) {
+	public async githubAuth({ response, auth, ally }: HttpContextContract) {
 		const github = ally.use("github");
 
 		if (github.accessDenied()) {
-			return "Access was denied";
+			return response.badRequest("Access was denied");
 		}
 
 		if (github.stateMisMatch()) {
-			return "Request expired. Retry again";
+			return response.badRequest("Request expired. Retry again");
 		}
 
 		if (github.hasError()) {
-			return github.getError();
+			return response.badRequest(github.getError());
 		}
 
-		const user = await github.user()
-		console.log(user);
-		return user;
+		const githubUser = await github.user();
+		console.log(githubUser);
+
+		let nome, sobrenome;
+		if (githubUser.name) {
+			nome = githubUser.name.split(" ")[0];
+			sobrenome = githubUser.name.split(" ")[1];
+		} else {
+			nome = githubUser.original.login
+			sobrenome = "";
+		}
+
+		const user = await User.firstOrCreate(
+			{
+				email: githubUser.email!,
+			},
+			{
+				nome,
+				sobrenome,
+				email: githubUser.email!,
+			}
+		);
+
+		return await auth.login(user);
 	}
 
 	public async cadastrar({ request, response, auth }: HttpContextContract) {

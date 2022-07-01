@@ -14,5 +14,8 @@ export default (route: typeof Route) => {
 		})
 		.prefix("users");
 
+	route.get("/github/redirect", async ({ ally }) => {
+		return ally.use("github").redirect();
+	});
 	route.get("/auth/github", "UsersController.githubAuth");
 };
