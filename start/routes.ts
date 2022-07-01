@@ -7,3 +7,7 @@ import ProjectRoute from "./routes/project";
 UserRoute(Route);
 CardRoute(Route);
 ProjectRoute(Route);
+
+Route.get("/github/redirect", async ({ ally }) => {
+	return ally.use("github").redirect();
+});

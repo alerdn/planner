@@ -13,4 +13,6 @@ export default (route: typeof Route) => {
 			route.get("/", "UsersController.buscarUsuario").middleware("auth");
 		})
 		.prefix("users");
+
+	route.post("/auth/github", "UsersController.githubAuth");
 };
